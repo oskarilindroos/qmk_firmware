@@ -6,13 +6,16 @@
 enum custom_keycodes {
     M_ALT_TAB = SAFE_RANGE,
     M_CMD_TAB,
+    M_CTRL_TAB
 };
 
 const uint16_t PROGMEM TAB_combo[] = {KC_W, KC_E, COMBO_END};
 const uint16_t PROGMEM ESC_combo[] = {KC_I, KC_O, COMBO_END};
+// const uint16_t PROGMEM CW_combo[] = {KC_F, KC_J, COMBO_END};
 combo_t key_combos[] = {
     COMBO(TAB_combo, KC_TAB), // I + O = ESC
     COMBO(ESC_combo, KC_ESC), // W + E = TAB
+    // COMBO(CW_combo, CW_TOGG), // Left shift + Right shift = CAPS WORD TOGGLE
 };
 
 // Layer names
@@ -53,13 +56,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // NAVigation layer
     [NAV] = LAYOUT_split_3x6_3(
         //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-        XXXXXXX, KC_VOLU, XXXXXXX, M_ALT_TAB, M_CMD_TAB, KC_BRIU,                     XXXXXXX, XXXXXXX,  KC_HOME,  KC_PGUP, KC_INS, XXXXXXX,
+        XXXXXXX, KC_VOLU, M_CTRL_TAB, M_ALT_TAB, M_CMD_TAB, KC_BRIU,                  KC_COPY, KC_PASTE,  KC_HOME,  KC_PGUP, KC_INS, XXXXXXX,
         //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-        XXXXXXX, KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, KC_BRID,                         KC_LEFT, KC_DOWN,  KC_UP,  KC_RGHT, XXXXXXX,  XXXXXXX,
+        XXXXXXX, KC_LGUI, KC_LALT, KC_LCTL, KC_LSFT, KC_BRID,                         KC_LEFT, KC_DOWN, KC_UP,  KC_RGHT, XXXXXXX,  XXXXXXX,
         //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-        XXXXXXX, KC_VOLD, KC_MPRV, KC_MPLY, KC_MNXT, XXXXXXX,                         XXXXXXX,  XXXXXXX, KC_END, KC_PGDN,  KC_DEL, XXXXXXX,
+        XXXXXXX, KC_VOLD, KC_MPRV, KC_MPLY, KC_MNXT, XXXXXXX,                         KC_UNDO,  KC_CUT, KC_END, KC_PGDN,  KC_DEL, XXXXXXX,
         //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                            XXXXXXX, MO(FUN), _______,           _______, _______, XXXXXXX
+                                            XXXXXXX, QK_LAYER_LOCK, _______,           _______, _______, XXXXXXX
                                         //`--------------------------'  `--------------------------'
     ),
 
@@ -96,6 +99,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         tap_code(KC_TAB);        // Press and release Tab
                     } else {
                         unregister_code(KC_LGUI);  // Release Command
+                    }
+                    return false;
+
+        case M_CTRL_TAB:
+                    if (record->event.pressed) {
+                        register_code(KC_LCTL);  // Hold Command
+                        tap_code(KC_TAB);        // Press and release Tab
+                    } else {
+                        unregister_code(KC_LCTL);  // Release Command
                     }
                     return false;
             }
